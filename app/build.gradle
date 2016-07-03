@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "23.0.2"
+    defaultConfig {
+        applicationId "com.xteam.warehouse.ascii.discount"
+        minSdkVersion 17
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        //The debug build type contains all the necessary settings for locally debug builds
+        debug {
+        }
+
+        //The release build contains all the necessary settings for release. The proguard is enabled
+        //using minifyEnabled and the proguard file are set properly
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    //Local repositories and libraries
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Remote Android specific repositories
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
+
+    //Remote Non Android specific repositories.
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'    //Apache 2.0 license
+    compile 'com.google.code.gson:gson:2.4'  //Apache 2.0 license
+
+
+}

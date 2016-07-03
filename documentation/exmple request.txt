@@ -1,0 +1,3 @@
+http://74.50.59.155:5000/api/search?onlyInStock=1&limit=20
+
+http://74.50.59.155:5000/api/search?onlyInStock=1&limit=20&q=happy%20joy
