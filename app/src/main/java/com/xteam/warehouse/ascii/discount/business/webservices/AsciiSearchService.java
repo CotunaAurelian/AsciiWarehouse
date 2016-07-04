@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.xteam.warehouse.ascii.discount.business.webservices.cache.CacheManager;
 import com.xteam.warehouse.ascii.discount.business.webservices.responses.DataFetchListener;
 import com.xteam.warehouse.ascii.discount.business.webservices.converters.NDJsonConverter;
 import com.xteam.warehouse.ascii.discount.business.webservices.converters.StringFormatUtils;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Cache;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,17 +61,18 @@ public class AsciiSearchService {
     /**
      * Fetches the data for the tags provided.
      *
-     * @param tags The query of the data. It can be null. If this parameter is null, then the call will
-     * still be triggered, but with default number of results to be returned
-     * @param listener The listener that will be notified of any data fetching events
+     * @param tags        The query of the data. It can be null. If this parameter is null, then the call will
+     *                    still be triggered, but with default number of results to be returned
+     * @param listener    The listener that will be notified of any data fetching events
      * @param onlyInStock Flag set if only in stock products have to be downloaded or not
      */
     public void fetchData(@Nullable List<String> tags, @NonNull final DataFetchListener listener, boolean onlyInStock) {
 
+        BaseResponse response = CacheManager.getInstance().fetchCacheResponse();
         //formatter:off
         //Prepare the retrofit object and add all the necessary parameters to it through the builder
         Retrofit retrofit = new Retrofit.Builder().baseUrl(AsciiSearchServiceInterface.BASE_URL).addConverterFactory(
-                        NDJsonConverter.newInstance()).build();
+                NDJsonConverter.newInstance()).build();
 
         //Create the api search access object based on the already defined AsciiSearchServiceInterface
         AsciiSearchServiceInterface apiSearchAccess = retrofit.create(AsciiSearchServiceInterface.class);
@@ -92,6 +95,9 @@ public class AsciiSearchService {
             @Override
             public void onResponse(Call<List<BaseResponse>> call, Response<List<BaseResponse>> response) {
                 listener.onSuccess((BaseResponse) response.body());
+
+                //Store the response to cache
+                CacheManager.getInstance().cacheResponse((BaseResponse) response.body());
             }
 
             @Override

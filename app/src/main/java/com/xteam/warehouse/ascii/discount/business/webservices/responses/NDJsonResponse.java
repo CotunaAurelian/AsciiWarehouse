@@ -1,12 +1,14 @@
 package com.xteam.warehouse.ascii.discount.business.webservices.responses;
 
 
+import java.io.Serializable;
+
 /**
  * NDJSon response wrapper. This class holds accessible JSON content parts
  * Created by Wraith on 7/2/2016.
  */
 
-public class NDJsonResponse extends BaseResponse {
+public class NDJsonResponse extends BaseResponse implements Serializable {
 
     /**
      * JSON parts from the raw content returned in the NDJSON format

@@ -2,6 +2,7 @@ package com.xteam.warehouse.ascii.discount.business.webservices.responses;
 
 import android.support.annotation.IntDef;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -15,7 +16,7 @@ import okio.BufferedSource;
  * Created by Wraith on 7/2/2016.
  */
 
-public class BaseResponse extends ResponseBody {
+public class BaseResponse extends ResponseBody implements Serializable{
     /**
      * Flag for no response or default one
      */
