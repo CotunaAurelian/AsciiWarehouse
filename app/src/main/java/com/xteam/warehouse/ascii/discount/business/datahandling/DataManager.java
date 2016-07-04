@@ -3,8 +3,15 @@ package com.xteam.warehouse.ascii.discount.business.datahandling;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.xteam.warehouse.ascii.discount.business.datastorage.SharedPreferenceManager;
 import com.xteam.warehouse.ascii.discount.business.webservices.AsciiSearchService;
+import com.xteam.warehouse.ascii.discount.business.webservices.converters.ConverterUtil;
+import com.xteam.warehouse.ascii.discount.business.webservices.responses.BaseResponse;
+import com.xteam.warehouse.ascii.discount.business.webservices.responses.DataFetchListener;
+import com.xteam.warehouse.ascii.discount.business.webservices.responses.NDJsonResponse;
+import com.xteam.warehouse.ascii.discount.model.dto.AsciiProductDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,12 +52,28 @@ public class DataManager {
     /**
      * Fetches the data for the tags provided.
      *
-     * @param tags     The query of the data. It can be null. If this parameter is null, then the call will
-     *                 still be triggered, but with default number of results to be returned
+     * @param tags The query of the data. It can be null. If this parameter is null, then the call will
+     * still be triggered, but with default number of results to be returned
      * @param listener The listener that will be notified of any data fetching events
      */
-    public void fetchData(@Nullable List<String> tags, @NonNull DataFetchListener listener) {
+    public void fetchData(@Nullable List<String> tags, @NonNull final ProductsSearchListener listener) {
         //TODO: implement the caching mechanism also.
-        AsciiSearchService.getInstance().fetchData(tags, listener);
+
+        AsciiSearchService.getInstance().fetchData(tags, new DataFetchListener() {
+            @Override
+            public void onSuccess(@NonNull BaseResponse response) {
+                if (response.getResponseType() == BaseResponse.NDJSON_RESPONSE) {
+                    listener.onSuccess(ConverterUtil.convertToAsciiProductDTO((NDJsonResponse) response));
+                } else {
+                    //If we received anything but a NDJSON response, but no error, return an empty list
+                    listener.onSuccess(new ArrayList<AsciiProductDTO>());
+                }
+            }
+
+            @Override
+            public void onError(@Nullable Throwable throwable) {
+                listener.onError(throwable);
+            }
+        }, SharedPreferenceManager.getInstance().isOnlyInStockChecked());
     }
 }

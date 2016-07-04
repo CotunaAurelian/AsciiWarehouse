@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         //The debug build type contains all the necessary settings for locally debug builds
         debug {
@@ -31,10 +32,13 @@ dependencies {
     //Remote Android specific repositories
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
+    compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.android.support:cardview-v7:24.0.0'
 
     //Remote Non Android specific repositories.
     compile 'com.squareup.retrofit2:retrofit:2.1.0'    //Apache 2.0 license
     compile 'com.google.code.gson:gson:2.4'  //Apache 2.0 license
+    compile 'com.miguelcatalan:materialsearchview:1.4.0' //Apache 2.0 license
 
 
 }

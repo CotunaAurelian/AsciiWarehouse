@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.xteam.warehouse.ascii.discount.business.datahandling.DataFetchListener;
+import com.xteam.warehouse.ascii.discount.business.webservices.responses.DataFetchListener;
 import com.xteam.warehouse.ascii.discount.business.webservices.converters.NDJsonConverter;
 import com.xteam.warehouse.ascii.discount.business.webservices.converters.StringFormatUtils;
 import com.xteam.warehouse.ascii.discount.business.webservices.responses.BaseResponse;
@@ -33,6 +33,7 @@ public class AsciiSearchService {
      */
     private static final String TAG = AsciiSearchService.class.getName();
 
+
     /**
      * Single instance of this class.
      */
@@ -58,29 +59,32 @@ public class AsciiSearchService {
     /**
      * Fetches the data for the tags provided.
      *
-     * @param tags     The query of the data. It can be null. If this parameter is null, then the call will
-     *                 still be triggered, but with default number of results to be returned
+     * @param tags The query of the data. It can be null. If this parameter is null, then the call will
+     * still be triggered, but with default number of results to be returned
      * @param listener The listener that will be notified of any data fetching events
+     * @param onlyInStock Flag set if only in stock products have to be downloaded or not
      */
-    public void fetchData(@Nullable List<String> tags, @NonNull final DataFetchListener listener) {
+    public void fetchData(@Nullable List<String> tags, @NonNull final DataFetchListener listener, boolean onlyInStock) {
 
         //formatter:off
         //Prepare the retrofit object and add all the necessary parameters to it through the builder
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(AsciiSearchServiceInterface.BASE_URL)
-                .addConverterFactory(NDJsonConverter.newInstance())
-                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(AsciiSearchServiceInterface.BASE_URL).addConverterFactory(
+                        NDJsonConverter.newInstance()).build();
 
         //Create the api search access object based on the already defined AsciiSearchServiceInterface
         AsciiSearchServiceInterface apiSearchAccess = retrofit.create(AsciiSearchServiceInterface.class);
 
         //Make the async calls
-//        Call<BaseResponse> call = apiSearchAccess.fetchProducts();
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("onlyInStock", "1");
-        parameters.put("limit", "40");
-        parameters.put("skip", "0");
-        parameters.put("q", StringFormatUtils.appendStringsWithDelimiter(new String[]{"happy", "joy"}, null));
+        //We are going to return only products that are in stock
+        parameters.put(AsciiSearchServiceInterface.ONLY_IN_STOCK_PARAMETER, onlyInStock ? "1" : "0");
+        //TODO: Implement a functionality that calculates how many items fit the screen
+        parameters.put(AsciiSearchServiceInterface.LIMIT_PARAMETER, "40");
+        //TODO: Implement a functionality that calculates how many items should be skipped
+        parameters.put(AsciiSearchServiceInterface.SKIP_PARAMETER, "0");
+        if (tags != null) {
+            parameters.put(AsciiSearchServiceInterface.QUERY_PARAMTER, StringFormatUtils.appendStringsWithDelimiter(tags, null));
+        }
 
 
         Call<List<BaseResponse>> call = apiSearchAccess.fetchProducts(parameters);

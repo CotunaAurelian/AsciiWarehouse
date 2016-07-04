@@ -1,4 +1,4 @@
-package com.xteam.warehouse.ascii.discount.business.datahandling;
+package com.xteam.warehouse.ascii.discount.business.webservices.responses;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 import com.xteam.warehouse.ascii.discount.business.webservices.responses.BaseResponse;
 
 /**
- * Interface definition for callbacks to be invoked when data is received.
+ * Interface definition for callbacks to be invoked when data is received. This interface will be used only in the business layer. It will handle
+ * base responses that are abstraction dtos used to wrap different kind of data.
+ *
  * <p>
  * Created by Wraith on 7/2/2016.
  */
