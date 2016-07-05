@@ -74,6 +74,14 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
 
     /**
+     * Append the new items to the existing dataset
+     * @param itemsList The items to be added to the dataset
+     */
+    public void addItems(List<AsciiProductDTO> itemsList){
+        this.mDataSet.addAll(itemsList);
+        notifyDataSetChanged();
+    }
+    /**
      * Set a listener to be notified when a click event on one of the elements occurs.
      *
      * @param listener The listener to be notified when the click event occurs

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,6 +64,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private MaterialSearchView mSearchView;
 
+    /**
+     * Flag used to prevent the recyclerview to keep firing new requests when a request for data is ongoing
+     */
+    private boolean mIsDataLoading;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +82,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         customizeToolbar();
 
-
         mSearchView = (MaterialSearchView) findViewById(R.id.search_view);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.products_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mGridLayoutManager = new GridLayoutManager(MainActivity.this, SPAN_COUNT);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mIsDataLoading = false;
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    //If the RecyclerView is scrolled down
+                    int visibleItemCount = mGridLayoutManager.getChildCount();
+                    int totalItemCount = mGridLayoutManager.getItemCount();
+                    int pastVisiblesItems = mGridLayoutManager.findFirstVisibleItemPosition();
+
+                    //If we approach the end of the line or we are on the end of the screen
+                    if (visibleItemCount + pastVisiblesItems >= totalItemCount) {
+                        if (!mIsDataLoading) {
+                            mIsDataLoading = true;
+                            DataManager.getInstance().fetchData(null, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), mAdapter
+                                            .getItemCount());
+                            Toast.makeText(MainActivity.this, "Loading required", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                }
+            }
+        });
 
         mNoDataTextView = (TextView) findViewById(R.id.empty_text_view);
 
@@ -127,22 +155,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.searchAllButton:
-                DataManager.getInstance().fetchData(null, this);
+                DataManager.getInstance().fetchData(null, this, false, calculateNumberOfVerticalVisibleSquares(),0);
         }
     }
 
+    /**
+     * Calculate how many items can fit the screen vertically. Items in the grid are squares and we can determine how many can fit the screen,
+     * before they are layout out by the adapter.
+     *
+     * @return The number of items that can fit the screen
+     */
+    private int calculateNumberOfVerticalVisibleSquares() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        int screenWidth = displayMetrics.widthPixels;
+
+        //Each item's width is equal to it's height, because the views layout are squares. Only a SPAN_COUNT number of squares can fit the screen's
+        // width
+        int itemSize = screenWidth / SPAN_COUNT;
+        if (itemSize == 0) itemSize++;
+
+        //We want to have an additional rows displayed on the bottom, because it can be partially seen, so we add one more
+        return ((displayMetrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.toolbar_height)) / itemSize +1) * SPAN_COUNT;
+
+
+    }
 
     @Override
     public void onSuccess(@NonNull List<AsciiProductDTO> asciiProductDTO) {
         mNoDataTextView.setVisibility((asciiProductDTO == null || asciiProductDTO.size() == 0) ? View.VISIBLE : View.GONE);
-        mAdapter = new ProductsAdapter(asciiProductDTO);
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(MainActivity.this);
+        if (mAdapter == null){
+            mAdapter = new ProductsAdapter(asciiProductDTO);
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.setOnItemClickListener(MainActivity.this);
+        }else {
+            mAdapter.addItems(asciiProductDTO);
+        }
+
+        mIsDataLoading = false;
     }
 
     @Override
     public void onError(@Nullable Throwable exception) {
         mNoDataTextView.setVisibility(View.VISIBLE);
+        mIsDataLoading = false;
         Toast.makeText(MainActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
 
     }

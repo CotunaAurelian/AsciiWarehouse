@@ -55,10 +55,12 @@ public class DataManager {
      * @param tags The query of the data. It can be null. If this parameter is null, then the call will
      * still be triggered, but with default number of results to be returned
      * @param listener The listener that will be notified of any data fetching events
+     * @param bypassCache Flag set if the cache should be ignored. If set to true, the call is made to the server, even if there is a valid cache
+     * with data.
+     * @param limit The maximum number of elements to be returned
+     * @param skip  The number of items to be skipped when creating a request
      */
-    public void fetchData(@Nullable List<String> tags, @NonNull final ProductsSearchListener listener) {
-        //TODO: implement the caching mechanism also.
-
+    public void fetchData(@Nullable List<String> tags, @NonNull final ProductsSearchListener listener, boolean bypassCache, int limit, int skip) {
         AsciiSearchService.getInstance().fetchData(tags, new DataFetchListener() {
             @Override
             public void onSuccess(@NonNull BaseResponse response) {
@@ -74,6 +76,6 @@ public class DataManager {
             public void onError(@Nullable Throwable throwable) {
                 listener.onError(throwable);
             }
-        }, SharedPreferenceManager.getInstance().isOnlyInStockChecked());
+        }, SharedPreferenceManager.getInstance().isOnlyInStockChecked(), bypassCache, limit, skip);
     }
 }

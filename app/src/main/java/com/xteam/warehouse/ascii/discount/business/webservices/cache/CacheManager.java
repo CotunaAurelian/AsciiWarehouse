@@ -1,10 +1,14 @@
 package com.xteam.warehouse.ascii.discount.business.webservices.cache;
 
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+import android.util.TimeUtils;
 
 import com.xteam.warehouse.ascii.discount.AsciiWareHouseApplication;
 import com.xteam.warehouse.ascii.discount.business.webservices.responses.BaseResponse;
+import com.xteam.warehouse.ascii.discount.business.webservices.responses.DataFetchListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Manager that handle the caching mechanism for the responses from the server.
@@ -37,6 +42,11 @@ public class CacheManager {
      */
     private static CacheManager sInstance;
 
+    /**
+     * Loader used to fetch the cache data in the background.
+     */
+    private AsyncTaskLoader<BaseResponse> mFetchCacheLoader;
+
     public static CacheManager getInstance() {
         if (sInstance == null) {
             sInstance = new CacheManager();
@@ -49,11 +59,11 @@ public class CacheManager {
 
     /**
      * Caches the serializable response to a file in the application's cache directory.
+     * <p/><b>Note:</b> this method is synchronously and it should be called from a background thread to avoid any performance hits
      *
      * @param response The serializable response that will be cached
      */
     public void cacheResponse(@NonNull BaseResponse response) {
-        //// TODO: 7/4/2016 make this async to improve performance
         //Get a reference to the current application's cache directory
         File cacheDirectory = AsciiWareHouseApplication.getContext().getCacheDir();
 
@@ -87,10 +97,10 @@ public class CacheManager {
 
     /**
      * Fetches cache response from the cache file, if such cached data exists.
+     * <p/><b>Note:</b> this method is synchronously and it should be called from a background thread to avoid any performance hits
      * If the data doesn't exist, null is returned
      */
     public BaseResponse fetchCacheResponse() {
-        //// TODO: 7/4/2016 make this async to improve performance
         //Get a reference to the current application's cache directory
         File cacheDirectory = AsciiWareHouseApplication.getContext().getCacheDir();
 
@@ -123,6 +133,63 @@ public class CacheManager {
             }
         }
         return response;
+    }
+
+    /**
+     * Fetches cache response from the cache file, if such cached data exists.
+     */
+    public void fetchCacheResponse(final DataFetchListener listener) {
+        mFetchCacheLoader = new AsyncTaskLoader<BaseResponse>(AsciiWareHouseApplication.getContext()) {
+            @Override
+            public BaseResponse loadInBackground() {
+                return fetchCacheResponse();
+            }
+
+            @Override
+            public void deliverResult(BaseResponse data) {
+                super.deliverResult(data);
+
+                if (data != null) {
+                    listener.onSuccess(data);
+                } else {
+                    listener.onError(null);
+                }
+            }
+
+            @Override
+            public void onCanceled(BaseResponse data) {
+                super.onCanceled(data);
+
+                if (data != null) {
+                    listener.onSuccess(data);
+                } else {
+                    listener.onError(null);
+                }
+            }
+        };
+        if (!mFetchCacheLoader.isStarted()) {
+            mFetchCacheLoader.forceLoad();
+        }
+
+    }
+
+    /**
+     * Check if the cache file exists and if it isn't expired.
+     * The cache file expires after 1 hour.
+     *
+     * @return True, if the cache exists and it is valid <p> False, otherwise
+     */
+    public boolean isCacheValid() {
+        //Get a reference to the current application's cache directory
+        File cacheDirectory = AsciiWareHouseApplication.getContext().getCacheDir();
+
+        //Create a file in the current application's cache directory that will be used to store the object
+        File cacheFile = new File(cacheDirectory.getAbsolutePath() + File.separator + CACHE_FILE_NAME);
+
+        //Calculate the time since the cache file has been modified, in hours
+        long timeSinceModified = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis() - cacheFile.lastModified());
+
+        return cacheFile.exists() && timeSinceModified < 1;
     }
 
 
