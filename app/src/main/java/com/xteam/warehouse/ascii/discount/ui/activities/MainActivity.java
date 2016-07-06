@@ -1,11 +1,15 @@
 package com.xteam.warehouse.ascii.discount.ui.activities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,7 +19,12 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +32,9 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.xteam.warehouse.ascii.discount.R;
 import com.xteam.warehouse.ascii.discount.business.datahandling.ProductsSearchListener;
 import com.xteam.warehouse.ascii.discount.business.datastorage.SharedPreferenceManager;
-import com.xteam.warehouse.ascii.discount.business.webservices.responses.DataFetchListener;
 import com.xteam.warehouse.ascii.discount.business.datahandling.DataManager;
-import com.xteam.warehouse.ascii.discount.business.webservices.responses.BaseResponse;
 import com.xteam.warehouse.ascii.discount.model.dto.AsciiProductDTO;
+import com.xteam.warehouse.ascii.discount.ui.AsciiWarehouseConstants;
 import com.xteam.warehouse.ascii.discount.ui.adapters.ProductsAdapter;
 import com.xteam.warehouse.ascii.discount.ui.views.OnRecyclerItemClickListener;
 
@@ -58,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * The text view displayed when there is no data available, or no result returned from the web server, or something was wrong with the request
      */
     private TextView mNoDataTextView;
+    /**
+     * The container for the ImageView and TextView for the error loading messages. This is used to show or hide the whole functionality
+     * for the loading error ImageView and TextView.
+     */
+    private LinearLayout mErrorDataContainer;
 
     /**
      * Search view in the toolbar
@@ -68,6 +81,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Flag used to prevent the recyclerview to keep firing new requests when a request for data is ongoing
      */
     private boolean mIsDataLoading;
+
+
+    /**
+     * The image view that will bounce until the loading is complete.
+     */
+    private ImageView mLoadingImageView;
+
+    /**
+     * The text view that will display a message when the loading is ongoing
+     */
+    private TextView mLoadingText;
+
+    /**
+     * The container for the ImageView and TextView for the loading messages and animation. This is used to show or hide the whole functionality
+     * for the loading ImageView and TextView.
+     */
+    private LinearLayout mLoadingContainer;
+
+    /**
+     * The searched words that the user completes into the search bar. If this string contains information, it will trigger a force call to the
+     * server and the cache will be bypassed.
+     */
+    private List<String> mSearchQuery;
 
 
     @Override
@@ -81,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onPostCreate(savedInstanceState);
 
         customizeToolbar();
-
-        mSearchView = (MaterialSearchView) findViewById(R.id.search_view);
+        initializeLoadingViews();
+        initializeSearchView();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.products_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -103,8 +139,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (visibleItemCount + pastVisiblesItems >= totalItemCount) {
                         if (!mIsDataLoading) {
                             mIsDataLoading = true;
-                            DataManager.getInstance().fetchData(null, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), mAdapter
-                                            .getItemCount());
+                            DataManager.getInstance().fetchData(null, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(),
+                                            mAdapter.getItemCount());
                             Toast.makeText(MainActivity.this, "Loading required", Toast.LENGTH_SHORT).show();
 
                         }
@@ -113,11 +149,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        mErrorDataContainer = (LinearLayout) findViewById(R.id.error_data_container);
+        mErrorDataContainer.setVisibility(View.GONE);
         mNoDataTextView = (TextView) findViewById(R.id.empty_text_view);
 
         mSearchAllButton = (Button) findViewById(R.id.searchAllButton);
         mSearchAllButton.setOnClickListener(this);
     }
+
+    /**
+     * Initialize the search view and handle seach queries
+     */
+    private void initializeSearchView() {
+        mSearchView = (MaterialSearchView) findViewById(R.id.search_view);
+        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query != null && query.trim().length() > 0) {
+
+                    //Clear existing items, since the search will refresh the content of the screen
+                    if (mAdapter!= null){
+                        mAdapter.clear();
+                    }
+                    mSearchQuery = Arrays.asList(query.split("\\s\\{2,\\}"));
+                    DataManager.getInstance().fetchData(mSearchQuery, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), 0);
+                    return true;
+                } else {
+                    mSearchQuery = null;
+                    return false;
+                }
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mSearchView.isSearchOpen()) {
+            mSearchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * Initialize the loading views if data is not available on cache. If the data is available on cache, then it will be fetched fast, and there
+     * is no need to display it
+     */
+    private void initializeLoadingViews() {
+        mLoadingImageView = (ImageView) findViewById(R.id.loading_data_image_view);
+        mLoadingText = (TextView) findViewById(R.id.loading_data_text);
+        mLoadingContainer = (LinearLayout) findViewById(R.id.loading_data_container);
+
+        showLoadingAnimation();
+    }
+
 
     /**
      * Customize the toolbar and set it as actionbar
@@ -155,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.searchAllButton:
-                DataManager.getInstance().fetchData(null, this, false, calculateNumberOfVerticalVisibleSquares(),0);
+                DataManager.getInstance().fetchData(mSearchQuery, this, true, calculateNumberOfVerticalVisibleSquares(), 0);
         }
     }
 
@@ -177,20 +267,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (itemSize == 0) itemSize++;
 
         //We want to have an additional rows displayed on the bottom, because it can be partially seen, so we add one more
-        return ((displayMetrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.toolbar_height)) / itemSize +1) * SPAN_COUNT;
+        return ((displayMetrics.heightPixels - getResources().getDimensionPixelSize(R.dimen.toolbar_height)) / itemSize + 1) * SPAN_COUNT;
+    }
 
+    /**
+     * Hides the animation views and clear any ongoing animation on it
+     */
+    private void hideAnimationContainer() {
+        mLoadingImageView.clearAnimation();
+        mLoadingContainer.setVisibility(View.GONE);
+    }
 
+    /**
+     * Initialize, attach and start an animation on the loading animation image view
+     */
+    private void showLoadingAnimation() {
+        mLoadingContainer.setVisibility(View.VISIBLE);
+        AnimationSet animatorSet = new AnimationSet(true);
+        animatorSet.addAnimation(AnimationUtils.loadAnimation(this, R.anim.bouncing_animation));
+        animatorSet.setInterpolator(new BounceInterpolator());
+        mLoadingImageView.clearAnimation();
+        mLoadingImageView.setAnimation(animatorSet);
+
+        mLoadingImageView.startAnimation(animatorSet);
     }
 
     @Override
     public void onSuccess(@NonNull List<AsciiProductDTO> asciiProductDTO) {
-        mNoDataTextView.setVisibility((asciiProductDTO == null || asciiProductDTO.size() == 0) ? View.VISIBLE : View.GONE);
-        if (mAdapter == null){
+        boolean errorOrNoData = (asciiProductDTO == null || asciiProductDTO.size() == 0 ||
+                        (asciiProductDTO.size() == 1 && asciiProductDTO.get(0) == null));
+
+        mErrorDataContainer.setVisibility(errorOrNoData ? View.VISIBLE : View.GONE);
+
+        if (errorOrNoData) {
+            mLoadingContainer.setVisibility(View.GONE);
+            mSearchView.closeSearch();
+            mAdapter = new ProductsAdapter(new ArrayList<AsciiProductDTO>());
+            mAdapter.setOnItemClickListener(MainActivity.this);
+            mRecyclerView.setAdapter(mAdapter);
+            mSearchQuery = null;
+            return;
+        }
+
+        if (mAdapter == null) {
             mAdapter = new ProductsAdapter(asciiProductDTO);
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.setOnItemClickListener(MainActivity.this);
-        }else {
+            hideAnimationContainer();
+        } else {
             mAdapter.addItems(asciiProductDTO);
+            mAdapter.setOnItemClickListener(MainActivity.this);
         }
 
         mIsDataLoading = false;
@@ -206,6 +332,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onListItemClicked(int position) {
-        Toast.makeText(MainActivity.this, "Clicked on item " + position, Toast.LENGTH_SHORT).show();
+
+        Intent startingIntent = new Intent(this, BuyProductActivity.class);
+        startingIntent.putExtra(AsciiWarehouseConstants.PRODUCT_BUNDLE_KEY, mAdapter.getItemAtPosition(position));
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                        mRecyclerView.getLayoutManager().findViewByPosition(position), "");
+        ActivityCompat.startActivity(this, startingIntent, options.toBundle());
     }
 }

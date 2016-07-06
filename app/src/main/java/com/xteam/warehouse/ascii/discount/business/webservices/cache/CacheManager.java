@@ -64,6 +64,10 @@ public class CacheManager {
      * @param response The serializable response that will be cached
      */
     public void cacheResponse(@NonNull BaseResponse response) {
+        //Do not corrupt the cache with empty data
+        if (response == null){
+            return;
+        }
         //Get a reference to the current application's cache directory
         File cacheDirectory = AsciiWareHouseApplication.getContext().getCacheDir();
 

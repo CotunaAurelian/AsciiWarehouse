@@ -5,4 +5,8 @@
     <color name="colorAccent">#ff0004</color>
     <color name="backgroundGray">#878787</color>
     <color name="backgroundLightGray">#cacaca</color>
+
+    <color name="button_gray_color">#56565b</color>
+    <color name="button_hovered">#a90003</color>
+    <color name="order_completion_color">#f92a2d</color>
 </resources>

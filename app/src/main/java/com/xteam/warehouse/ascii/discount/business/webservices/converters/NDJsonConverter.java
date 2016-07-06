@@ -36,7 +36,8 @@ public class NDJsonConverter extends Converter.Factory implements Converter<Resp
     }
 
     @Override
-    public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
+    public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations,
+                    Retrofit retrofit) {
         return null;
     }
 
@@ -60,6 +61,10 @@ public class NDJsonConverter extends Converter.Factory implements Converter<Resp
         bufferedReader.close();
         value.close();
 
+        if (responseStringBuilder.toString().trim().length() == 0) {
+            //No Data received
+            return null;
+        }
         return new NDJsonResponse(responseStringBuilder.toString());
     }
 }

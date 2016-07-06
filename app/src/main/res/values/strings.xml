@@ -3,4 +3,12 @@
     <string name="lbl_no_data" description="Label used when there are no data matches found">No data</string>
     <string name="lbl_only_on_stock" description="Label. Label used when the user checks if only on stock items should be displayed">Only in
         Stock</string>
+    <string name="lbl_loading_data" description="Label. Label used when the application loads data">Loading data…</string>
+    <string name="lbl_loading_more_data" description="Label. Label used when the application loads more data">Loading more data…</string>
+    <string name="lbl_buy_now" description="Label. Label used on the button the user uses to buy an item">BUY NOW!</string>
+    <string name="lbl_only_one_in_stock" description="Label. Label used on the button the user uses to buy, when only one item is left in stock">
+        BUY NOW! \n (Only one in stock!)
+    </string>
+    <string name="lbl_order_completed" description="Label. Label used when the user completes a buy operation">Order Successful</string>
+    <string name="lbl_no_items_left" description="Label. Label used when there is no item left">No items available</string>
 </resources>

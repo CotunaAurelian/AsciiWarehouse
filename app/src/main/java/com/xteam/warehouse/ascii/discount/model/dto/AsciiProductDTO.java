@@ -1,5 +1,8 @@
 package com.xteam.warehouse.ascii.discount.model.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -8,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Wraith on 7/2/2016.
  */
 
-public class AsciiProductDTO  {
+public class AsciiProductDTO implements Parcelable {
 
     @SerializedName("type")
     public String mType;
@@ -32,6 +35,43 @@ public class AsciiProductDTO  {
     public String[] mTags;
 
 
+    public static final Creator<AsciiProductDTO> CREATOR = new Creator<AsciiProductDTO>() {
+        @Override
+        public AsciiProductDTO createFromParcel(Parcel in) {
+            return new AsciiProductDTO(in);
+        }
+
+        @Override
+        public AsciiProductDTO[] newArray(int size) {
+            return new AsciiProductDTO[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public AsciiProductDTO(Parcel in){
+        mType = in.readString();
+        mID = in.readString();
+        mSize = in.readLong();
+        mPrice = in.readDouble();
+        mFace = in.readString();
+        mStock = in.readLong();
+        mTags = in.createStringArray();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mType);
+        parcel.writeString(mID);
+        parcel.writeLong(mSize);
+        parcel.writeDouble(mPrice);
+        parcel.writeString(mFace);
+        parcel.writeLong(mStock);
+        parcel.writeStringArray(mTags);
+    }
 
 
 }

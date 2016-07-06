@@ -72,15 +72,39 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         return mDataSet.size();
     }
 
+    /**
+     * Returns an element at a certain position. If the dataset doesn't exists, or the position is outside of range, null is returned
+     *
+     * @param position The position of the item that is returned
+     */
+    public AsciiProductDTO getItemAtPosition(int position) {
+        if (mDataSet != null && position < mDataSet.size()) {
+            return mDataSet.get(position);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Append the new items to the existing dataset
+     *
      * @param itemsList The items to be added to the dataset
      */
-    public void addItems(List<AsciiProductDTO> itemsList){
+    public void addItems(List<AsciiProductDTO> itemsList) {
+        int initialPosition = mDataSet.size();
         this.mDataSet.addAll(itemsList);
-        notifyDataSetChanged();
+        notifyItemRangeInserted(initialPosition, itemsList.size());
     }
+
+    /**
+     * Clears the items in the list
+     */
+    public void clear(){
+        int removedItems = mDataSet.size();
+        this.mDataSet.clear();
+        notifyItemRangeRemoved(0,removedItems);
+    }
+
     /**
      * Set a listener to be notified when a click event on one of the elements occurs.
      *

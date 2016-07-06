@@ -58,13 +58,13 @@ public class DataManager {
      * @param bypassCache Flag set if the cache should be ignored. If set to true, the call is made to the server, even if there is a valid cache
      * with data.
      * @param limit The maximum number of elements to be returned
-     * @param skip  The number of items to be skipped when creating a request
+     * @param skip The number of items to be skipped when creating a request
      */
     public void fetchData(@Nullable List<String> tags, @NonNull final ProductsSearchListener listener, boolean bypassCache, int limit, int skip) {
         AsciiSearchService.getInstance().fetchData(tags, new DataFetchListener() {
             @Override
             public void onSuccess(@NonNull BaseResponse response) {
-                if (response.getResponseType() == BaseResponse.NDJSON_RESPONSE) {
+                if (response != null && response.getResponseType() == BaseResponse.NDJSON_RESPONSE) {
                     listener.onSuccess(ConverterUtil.convertToAsciiProductDTO((NDJsonResponse) response));
                 } else {
                     //If we received anything but a NDJSON response, but no error, return an empty list
