@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,9 +38,8 @@ import com.xteam.warehouse.ascii.discount.ui.AsciiWarehouseConstants;
 import com.xteam.warehouse.ascii.discount.ui.adapters.ProductsAdapter;
 import com.xteam.warehouse.ascii.discount.ui.views.OnRecyclerItemClickListener;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, ProductsSearchListener, OnRecyclerItemClickListener {
+public class MainActivity extends AppCompatActivity implements ProductsSearchListener, OnRecyclerItemClickListener {
 
-    private Button mSearchAllButton;
 
     /**
      * The span count for the grid used to display products.
@@ -105,6 +104,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private List<String> mSearchQuery;
 
+    /**
+     * The SwipeRefreshLayout should be used to refresh the content of the screen via a vertical swipe gesture.
+     */
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +123,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         customizeToolbar();
         initializeLoadingViews();
         initializeSearchView();
+        initializeSwipeToRefreshViews();
+        initializeProductsRecyclerView();
 
+        mErrorDataContainer = (LinearLayout) findViewById(R.id.error_data_container);
+        mErrorDataContainer.setVisibility(View.GONE);
+        mNoDataTextView = (TextView) findViewById(R.id.empty_text_view);
+
+        showLoadingAnimation();
+        DataManager.getInstance().fetchData(mSearchQuery, this, true, calculateNumberOfVerticalVisibleSquares(), 0);
+    }
+
+    /**
+     * Initialize the RecyclerView for the products and handle the scrolling events
+     */
+    private void initializeProductsRecyclerView(){
         mRecyclerView = (RecyclerView) findViewById(R.id.products_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mGridLayoutManager = new GridLayoutManager(MainActivity.this, SPAN_COUNT);
@@ -148,15 +166,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-
-        mErrorDataContainer = (LinearLayout) findViewById(R.id.error_data_container);
-        mErrorDataContainer.setVisibility(View.GONE);
-        mNoDataTextView = (TextView) findViewById(R.id.empty_text_view);
-
-        mSearchAllButton = (Button) findViewById(R.id.searchAllButton);
-        mSearchAllButton.setOnClickListener(this);
     }
 
+    /**
+     * Initialize the swipe to refresh views and handle the swipe gestures
+     */
+    private void initializeSwipeToRefreshViews(){
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //Show the loading animation in the middle of the screen only if no items are available
+                if (mAdapter == null || mAdapter.getItemCount() ==0){
+                    hideErrorContainer();
+                    showLoadingAnimation();
+                }
+                //Force refresh items, bypassing cache and do not skip items
+                DataManager.getInstance().fetchData(mSearchQuery, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), 0);
+            }
+
+        });
+    }
     /**
      * Initialize the search view and handle seach queries
      */
@@ -241,13 +271,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.searchAllButton:
-                DataManager.getInstance().fetchData(mSearchQuery, this, true, calculateNumberOfVerticalVisibleSquares(), 0);
-        }
-    }
 
     /**
      * Calculate how many items can fit the screen vertically. Items in the grid are squares and we can determine how many can fit the screen,
@@ -276,6 +299,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void hideAnimationContainer() {
         mLoadingImageView.clearAnimation();
         mLoadingContainer.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * Hides the error container views
+     */
+    private void hideErrorContainer(){
+        mErrorDataContainer.setVisibility(View.GONE);
     }
 
     /**
@@ -313,21 +344,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mAdapter = new ProductsAdapter(asciiProductDTO);
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.setOnItemClickListener(MainActivity.this);
-            hideAnimationContainer();
+
         } else {
             mAdapter.addItems(asciiProductDTO);
             mAdapter.setOnItemClickListener(MainActivity.this);
         }
 
+        hideAnimationContainer();
+        mSwipeRefreshLayout.setRefreshing(false);
         mIsDataLoading = false;
     }
 
     @Override
     public void onError(@Nullable Throwable exception) {
-        mNoDataTextView.setVisibility(View.VISIBLE);
+        mErrorDataContainer.setVisibility(View.VISIBLE);
+        hideAnimationContainer();
+        mSwipeRefreshLayout.setRefreshing(false);
         mIsDataLoading = false;
-        Toast.makeText(MainActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
-
     }
 
     @Override

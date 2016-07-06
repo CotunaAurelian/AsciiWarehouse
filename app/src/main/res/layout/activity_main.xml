@@ -1,61 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout
-    android:id="@+id/activity_main"
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.xteam.warehouse.ascii.discount.ui.activities.MainActivity">
 
     <FrameLayout
         android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
+            app:popupTheme="@style/AppTheme.Overlay"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
-            android:background="@color/colorPrimaryDark"
-            app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-            app:popupTheme="@style/AppTheme.Overlay"/>
+            android:background="@color/colorPrimaryDark"/>
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="@+id/activity_main"/>
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/products_recycler_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
-        />
+        android:layout_below="@+id/toolbar_container">
 
-    <include layout="@layout/error_or_no_data_layout"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/products_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            />
 
-    <include layout="@layout/loading_data_layout"
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <include
+        layout="@layout/error_or_no_data_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <Button
-        android:id="@+id/searchAllButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="56dp"
-        android:text="Search all"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintTop_toTopOf="@+id/products_recycler_view"/>
+
+    <include
+        layout="@layout/loading_data_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
