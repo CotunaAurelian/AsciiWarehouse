@@ -90,7 +90,7 @@ public class BuyProductActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view) {
         Snackbar snackbar = Snackbar.make(view, R.string.lbl_order_completed, Snackbar.LENGTH_SHORT);
         snackbar.getView().setMinimumHeight(mBuyProductButton.getHeight());
-        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.order_completion_color));
+        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
         mData.mStock--;
         bindViews();

@@ -17,6 +17,8 @@
         android:id="@+id/loading_data_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/normal_text_size"
+        android:textColor="@color/colorTextWhite"
         android:layout_margin="3dp"
         android:text="@string/lbl_loading_data"/>
 

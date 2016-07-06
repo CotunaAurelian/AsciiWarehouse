@@ -55,6 +55,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         //Set the element from the mDataSet for the corresponding position.
         holder.mFaceTextView.setText(mDataSet.get(position).mFace);
         holder.mFaceTextView.setTag(position);
+        boolean isOutOfStock = mDataSet.get(position).mStock <= 0;
+        holder.mOutOfStockTextView.setVisibility(isOutOfStock ? View.VISIBLE : View.GONE);
 
         holder.mFaceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,10 +101,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     /**
      * Clears the items in the list
      */
-    public void clear(){
+    public void clear() {
         int removedItems = mDataSet.size();
         this.mDataSet.clear();
-        notifyItemRangeRemoved(0,removedItems);
+        notifyItemRangeRemoved(0, removedItems);
     }
 
     /**
@@ -121,10 +123,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mFaceTextView;
+        private TextView mOutOfStockTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.mFaceTextView = (TextView) itemView.findViewById(R.id.face_text_view);
+            this.mOutOfStockTextView = (TextView) itemView.findViewById(R.id.out_of_stock_text_view);
         }
     }
 

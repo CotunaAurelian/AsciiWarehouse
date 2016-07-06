@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     /**
      * The span count for the grid used to display products.
      */
-    private static final int SPAN_COUNT = 3;
+    private static final int SPAN_COUNT = 2;
 
     /**
      * Recycler view that will hold a grid with products displayed on the screen
@@ -173,6 +173,10 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
      */
     private void initializeSwipeToRefreshViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.colorAccent,
+                R.color.colorAccentDark,
+                R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

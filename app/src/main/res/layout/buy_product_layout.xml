@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:background="@android:color/white"
-                android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    android:background="@color/colorPrimaryDarkGrey"
+    android:orientation="vertical">
+
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/snackbar_container"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/face_text_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/price_text_view"
-        android:textColor="@android:color/black"
         android:gravity="center"
+        android:textColor="@color/colorTextWhite"
+        android:textStyle="bold"
         android:textSize="40sp"
-        tools:text="HAHA"/>
+        tools:text="HAHA" />
+
+
+    <View
+        android:layout_below="@id/face_text_view"
+        android:layout_width="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_height="0.5dp"
+        android:background="@color/colorTextGrey"/>
 
     <TextView
         android:id="@+id/price_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buy_button"
-        android:textColor="@android:color/black"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
         android:text="55$"
-        />
+        android:textColor="@color/colorTextGrey" />
 
     <Button
         android:id="@+id/buy_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/buy_button_dimension"
         android:layout_alignParentBottom="true"
+        android:background="@drawable/buy_button_drawable_selector"
         android:text="@string/lbl_buy_now"
         android:textAllCaps="false"
-        android:background="@drawable/buy_button_drawable_selector"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/colorTextGrey" />
 </RelativeLayout>
