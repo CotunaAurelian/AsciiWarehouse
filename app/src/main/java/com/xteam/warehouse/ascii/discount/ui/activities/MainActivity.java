@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
                             mIsDataLoading = true;
                             DataManager.getInstance().fetchData(null, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(),
                                             mAdapter.getItemCount());
-                            Toast.makeText(MainActivity.this, "Loading required", Toast.LENGTH_SHORT).show();
 
                         }
                     }
