@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
         mNoDataTextView = (TextView) findViewById(R.id.empty_text_view);
 
         showLoadingAnimation();
-        DataManager.getInstance().fetchData(mSearchQuery, this, true, calculateNumberOfVerticalVisibleSquares(), 0);
+        DataManager.getInstance().fetchData(mSearchQuery, this, false, calculateNumberOfVerticalVisibleSquares(), 0);
     }
 
     /**
@@ -206,9 +206,11 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
                         mAdapter.clear();
                     }
                     mSearchQuery = Arrays.asList(query.split("\\s\\{2,\\}"));
+                    showLoadingAnimation();
                     DataManager.getInstance().fetchData(mSearchQuery, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), 0);
                     return true;
                 } else {
+                    mRecyclerView.requestFocus();
                     mSearchQuery = null;
                     return false;
                 }
@@ -225,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     public void onBackPressed() {
         if (mSearchView.isSearchOpen()) {
             mSearchView.closeSearch();
+            mRecyclerView.requestFocus();
         } else {
             super.onBackPressed();
         }
@@ -337,6 +340,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
         if (errorOrNoData) {
             mLoadingContainer.setVisibility(View.GONE);
             mSearchView.closeSearch();
+            mRecyclerView.requestFocus();
             mAdapter = new ProductsAdapter(new ArrayList<AsciiProductDTO>());
             mAdapter.setOnItemClickListener(MainActivity.this);
             mRecyclerView.setAdapter(mAdapter);
@@ -353,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
             mAdapter.addItems(asciiProductDTO);
             mAdapter.setOnItemClickListener(MainActivity.this);
         }
+        mRecyclerView.requestFocus();
 
         hideAnimationContainer();
         mSwipeRefreshLayout.setRefreshing(false);
@@ -363,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     public void onError(@Nullable Throwable exception) {
         mErrorDataContainer.setVisibility(View.VISIBLE);
         hideAnimationContainer();
+        mRecyclerView.requestFocus();
         mSwipeRefreshLayout.setRefreshing(false);
         mIsDataLoading = false;
     }
@@ -373,8 +379,12 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
         Intent startingIntent = new Intent(this, BuyProductActivity.class);
         startingIntent.putExtra(AsciiWarehouseConstants.PRODUCT_BUNDLE_KEY, mAdapter.getItemAtPosition(position));
 
+        View clickedView = mRecyclerView.getLayoutManager().findViewByPosition(position);
+        startingIntent.putExtra(AsciiWarehouseConstants.VIEW_X_POSITION, clickedView.getX());
+        startingIntent.putExtra(AsciiWarehouseConstants.VIEW_Y_POSITION, clickedView.getY());
+
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                        mRecyclerView.getLayoutManager().findViewByPosition(position), "");
+                        clickedView, "");
         ActivityCompat.startActivity(this, startingIntent, options.toBundle());
     }
 }

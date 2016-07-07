@@ -17,7 +17,7 @@
         android:id="@+id/empty_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorTextWhite"
+        android:textColor="@color/colorTextGrey"
         android:textSize="@dimen/normal_text_size"
         android:layout_margin="3dp"
         android:text="@string/lbl_no_data"/>

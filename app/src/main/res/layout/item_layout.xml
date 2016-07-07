@@ -22,8 +22,7 @@
         android:id="@+id/face_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/card_background"
-        android:textColor="@color/colorTextWhite"
+        android:textColor="@color/colorTextGrey"
         android:gravity="center"
         android:textSize="25sp"
         tools:text="aaaaaaa"/>

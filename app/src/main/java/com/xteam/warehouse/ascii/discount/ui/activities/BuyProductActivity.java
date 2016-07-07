@@ -5,7 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xteam.warehouse.ascii.discount.R;
@@ -40,6 +44,20 @@ public class BuyProductActivity extends AppCompatActivity implements View.OnClic
      */
     private AsciiProductDTO mData;
 
+    /**
+     * Root view that will be used to animate the whole screen in
+     */
+    private RelativeLayout mRootView;
+
+    /**
+     * The initial x position of the view. This is used to create the smooth transition animation on x axis on both enter animation and exit animation
+     */
+    private float mInitialXPosition;
+    /**
+     * The initial y position of the view. This is used to create the smooth transition animation on x axis on both enter animation and exit animation
+     */
+    private float mInitialYPosition;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,20 +65,30 @@ public class BuyProductActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.buy_product_layout);
         if (getIntent().hasExtra(AsciiWarehouseConstants.PRODUCT_BUNDLE_KEY)) {
             this.mData = getIntent().getParcelableExtra(AsciiWarehouseConstants.PRODUCT_BUNDLE_KEY);
+            this.mInitialXPosition = getIntent().getFloatExtra(AsciiWarehouseConstants.VIEW_X_POSITION, 0);
+            this.mInitialYPosition = getIntent().getFloatExtra(AsciiWarehouseConstants.VIEW_Y_POSITION, 0);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        runExitAnimation();
     }
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         //Initialize views components
+        mRootView = (RelativeLayout) findViewById(R.id.root_view);
         mFaceTextView = (TextView) findViewById(R.id.face_text_view);
         mPriceTextView = (TextView) findViewById(R.id.price_text_view);
         mBuyProductButton = (Button) findViewById(R.id.buy_button);
         mBuyProductButton.setOnClickListener(this);
-
         bindViews();
+
+        runEnterAnimation();
     }
+
 
     /**
      * Bind the data to the views. If the data has no items left in stock, the buy product button will be disabled. If only one item in stock,
@@ -84,6 +112,64 @@ public class BuyProductActivity extends AppCompatActivity implements View.OnClic
                 mBuyProductButton.setText(getResources().getString(R.string.lbl_buy_now));
             }
         }
+    }
+
+
+    /**
+     * The enter animation scales the text view in from its previous size/location. In parallel, the background of the activity is fading in.
+     */
+    private void runEnterAnimation() {
+        final long duration = 500;
+
+        // Figure out where the thumbnail and full size versions are, relative
+        // to the screen and each other
+        int[] screenLocation = new int[2];
+        mFaceTextView.getLocationOnScreen(screenLocation);
+        float mLeftDelta = mInitialXPosition - screenLocation[0];
+        float mTopDelta = mInitialYPosition - screenLocation[1];
+
+
+        // Set starting values for properties we're going to animate. These
+        // values scale and position the full size version down to the
+        // size/location, from which we'll animate it back up
+        mFaceTextView.setPivotX(0);
+        mFaceTextView.setPivotY(0);
+        mFaceTextView.setScaleX(mFaceTextView.getWidth());
+        mFaceTextView.setScaleY(mFaceTextView.getHeight());
+        mFaceTextView.setTranslationX(mLeftDelta);
+        mFaceTextView.setTranslationY(mTopDelta);
+
+        // Animate scale and translation to full size
+        mFaceTextView.animate().setDuration(duration).
+                        scaleX(1).scaleY(1).
+                        translationX(0).translationY(0).
+                        setInterpolator(new DecelerateInterpolator());
+
+        //Animate the background
+        mRootView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation));
+
+    }
+
+    /**
+     * The enter animation scales the text view in from its previous size/location. In parallel, the background of the activity is fading out.
+     * When the fade out animation ends, this activity is closed
+     */
+    private void runExitAnimation() {
+        final long duration = 300;
+        //Animate the background
+        mRootView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_animation));
+        mFaceTextView.animate().
+                        setDuration(duration).
+                        scaleX(0.3f).
+                        scaleY(0.3f).
+                        setInterpolator(new AccelerateInterpolator()).
+                        translationX(mInitialXPosition).
+                        translationY(mInitialYPosition).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                BuyProductActivity.this.finish();
+            }
+        });
     }
 
     @Override
