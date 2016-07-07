@@ -14,7 +14,7 @@
         android:layout_above="@+id/price_text_view"
         android:gravity="center"
         android:textColor="@color/colorPrimaryBrown"
-        android:textSize="40sp"
+        android:textSize="@dimen/big_text_size"
         android:textStyle="bold"/>
 
 
@@ -32,7 +32,7 @@
         android:layout_above="@+id/buy_button"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
-        android:textSize="18sp"
+        android:textSize="@dimen/medium_text_size"
         android:layout_margin="10dp"
         android:textColor="@color/colorTextBrown"/>
 
@@ -43,7 +43,7 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/buy_button_drawable_selector"
         android:text="@string/lbl_buy_now"
-        android:textSize="18sp"
+        android:textSize="@dimen/medium_text_size"
         android:textAllCaps="false"
         android:textColor="@color/colorTextWhite"/>
 
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="@dimen/medium_text_size"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:textColor="@color/colorTextWhite"

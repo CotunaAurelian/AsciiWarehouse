@@ -33,7 +33,7 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:textColor="@color/colorPrimaryBrown"
-                android:textSize="35sp"
+                android:textSize="@dimen/big_text_size"
                 card_view:mrl_rippleHover="true"
                 card_view:mrl_rippleOverlay="true"
                 tools:text="aaaaaaa"/>

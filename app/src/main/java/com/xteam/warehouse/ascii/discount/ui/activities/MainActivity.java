@@ -17,6 +17,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
                         if (!mIsDataLoading) {
                             mIsDataLoading = true;
                             DataManager.getInstance().fetchData(null, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(),
-                                            mAdapter.getItemCount());
+                                    mAdapter.getItemCount());
 
                         }
                     }
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText == null || (newText!= null && newText.trim().length()==0)){
+                if (newText == null || (newText != null && newText.trim().length() == 0)) {
                     mSearchQuery = null;
                 }
                 return false;
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
      * Hides the error container views
      */
     private void hideErrorContainer() {
-        if (mErrorDataContainer!=null) {
+        if (mErrorDataContainer != null) {
             mErrorDataContainer.setVisibility(View.GONE);
         }
     }
@@ -350,8 +351,9 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     @Override
     public void onSuccess(@NonNull List<AsciiProductDTO> asciiProductDTO) {
         boolean errorOrNoData = (asciiProductDTO == null || asciiProductDTO.size() == 0 ||
-                        (asciiProductDTO.size() == 1 && asciiProductDTO.get(0) == null));
+                (asciiProductDTO.size() == 1 && asciiProductDTO.get(0) == null));
 
+        Log.d("XXX", "ascii null "+(asciiProductDTO == null) );
         mErrorDataContainer.setVisibility(errorOrNoData ? View.VISIBLE : View.GONE);
 
         if (mIsForcedRequest) {
@@ -391,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     @Override
     public void onError(@Nullable Throwable exception) {
         mErrorDataContainer.setVisibility(View.VISIBLE);
+        mAdapter.clear();
         hideAnimationContainer();
         mRecyclerView.requestFocus();
         mSwipeRefreshLayout.setRefreshing(false);
