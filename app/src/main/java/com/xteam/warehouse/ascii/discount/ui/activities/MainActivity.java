@@ -199,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
      */
     private void initializeSearchView() {
         mSearchView = (MaterialSearchView) findViewById(R.id.search_view);
+        mSearchView.showVoice(true);
         mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -223,7 +224,16 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText == null || (newText!= null && newText.trim().length()==0)){
+                    mSearchQuery = null;
+                }
                 return false;
+            }
+        });
+        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
             }
         });
     }
