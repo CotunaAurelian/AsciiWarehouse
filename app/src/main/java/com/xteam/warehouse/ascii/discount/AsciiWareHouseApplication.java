@@ -11,7 +11,7 @@ import android.content.Context;
 public class AsciiWareHouseApplication extends Application {
 
     /**
-     * Application level context
+     * Application level context used when activity context can't be reached and to avoid leaking whole views
      */
     private static Context sApplicationContext;
 
@@ -25,7 +25,7 @@ public class AsciiWareHouseApplication extends Application {
     /**
      * Return a reference to the application context
      */
-    public static Context getContext(){
+    public static Context getContext() {
         return sApplicationContext;
     }
 }

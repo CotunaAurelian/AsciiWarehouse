@@ -1,6 +1,5 @@
 package com.xteam.warehouse.ascii.discount.ui.activities;
 
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;

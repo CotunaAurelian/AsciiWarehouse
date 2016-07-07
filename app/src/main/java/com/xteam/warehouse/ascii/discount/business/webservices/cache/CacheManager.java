@@ -1,10 +1,8 @@
 package com.xteam.warehouse.ascii.discount.business.webservices.cache;
 
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
-import android.util.TimeUtils;
 
 import com.xteam.warehouse.ascii.discount.AsciiWareHouseApplication;
 import com.xteam.warehouse.ascii.discount.business.webservices.responses.BaseResponse;
@@ -12,7 +10,6 @@ import com.xteam.warehouse.ascii.discount.business.webservices.responses.DataFet
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -65,7 +62,7 @@ public class CacheManager {
      */
     public void cacheResponse(@NonNull BaseResponse response) {
         //Do not corrupt the cache with empty data
-        if (response == null){
+        if (response == null) {
             return;
         }
         //Get a reference to the current application's cache directory

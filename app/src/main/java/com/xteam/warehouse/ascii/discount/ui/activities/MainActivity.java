@@ -61,10 +61,6 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     private ProductsAdapter mAdapter;
 
     /**
-     * The text view displayed when there is no data available, or no result returned from the web server, or something was wrong with the request
-     */
-    private TextView mNoDataTextView;
-    /**
      * The container for the ImageView and TextView for the error loading messages. This is used to show or hide the whole functionality
      * for the loading error ImageView and TextView.
      */
@@ -133,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
 
         mErrorDataContainer = (LinearLayout) findViewById(R.id.error_data_container);
         mErrorDataContainer.setVisibility(View.GONE);
-        mNoDataTextView = (TextView) findViewById(R.id.empty_text_view);
 
         showLoadingAnimation();
         DataManager.getInstance().fetchData(mSearchQuery, this, false, calculateNumberOfVerticalVisibleSquares(), 0);
