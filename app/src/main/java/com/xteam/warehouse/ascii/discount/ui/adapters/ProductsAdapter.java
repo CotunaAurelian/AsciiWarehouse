@@ -10,6 +10,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.xteam.warehouse.ascii.discount.R;
@@ -77,7 +78,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             itemViewHolder.mFaceTextView.setText(mDataSet.get(position).mFace);
             itemViewHolder.mFaceTextView.setTag(position);
             boolean isOutOfStock = mDataSet.get(position).mStock <= 0;
-            itemViewHolder.outOfStockImageView.setVisibility(isOutOfStock ? View.VISIBLE : View.GONE);
+            itemViewHolder.mOutOfStockLayout.setVisibility(isOutOfStock ? View.VISIBLE : View.GONE);
 
             itemViewHolder.mFaceTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -164,12 +165,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     static class ItemViewHolder extends ViewHolder {
 
         private TextView mFaceTextView;
-        private ImageView outOfStockImageView;
+        private LinearLayout mOutOfStockLayout;
 
         ItemViewHolder(View itemView) {
             super(itemView);
             this.mFaceTextView = (TextView) itemView.findViewById(R.id.face_text_view);
-            this.outOfStockImageView = (ImageView) itemView.findViewById(R.id.out_of_stock_image_view);
+            this.mOutOfStockLayout = (LinearLayout) itemView.findViewById(R.id.out_of_stock_layout);
         }
     }
 

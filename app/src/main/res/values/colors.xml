@@ -6,6 +6,7 @@
     <color name="colorPrimaryBrown">#684B3F</color>
     <color name="colorAccent">#FBAB3B</color>
     <color name="colorBuyNow">#C13100</color>
+    <color name="colorNotAvailable">#FFCC99</color>
     <color name="colorBuyNowDark">#912500</color>
     <color name="colorAccentDark">#D69347</color>
     <color name="delimiterColor">#684B3F</color>

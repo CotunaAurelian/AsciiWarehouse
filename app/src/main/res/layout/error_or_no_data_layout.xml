@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/error_data_image_view"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/loading_image_dimension"
+        android:layout_height="@dimen/loading_image_dimension"
         android:layout_gravity="center"
         android:layout_margin="3dp"
         android:src="@drawable/sad_face"/>
@@ -17,7 +17,8 @@
         android:id="@+id/empty_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorTextDarkGrey"
+        android:textColor="@color/colorTextBrown"
+        android:textStyle="bold"
         android:textSize="@dimen/normal_text_size"
         android:layout_margin="3dp"
         android:text="@string/lbl_no_data"/>
