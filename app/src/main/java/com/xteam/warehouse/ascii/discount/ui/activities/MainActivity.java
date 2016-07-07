@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
                         mAdapter.clear();
                     }
                     mSearchQuery = Arrays.asList(query.split("\\s\\{2,\\}"));
+                    hideErrorContainer();
                     showLoadingAnimation();
                     mIsForcedRequest = true;
                     DataManager.getInstance().fetchData(mSearchQuery, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), 0);
@@ -230,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     @Override
     public void onBackPressed() {
         if (mSearchView.isSearchOpen()) {
+            mSearchQuery = null;
             mSearchView.closeSearch();
             mRecyclerView.requestFocus();
         } else {
@@ -316,7 +318,9 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
      * Hides the error container views
      */
     private void hideErrorContainer() {
-        mErrorDataContainer.setVisibility(View.GONE);
+        if (mErrorDataContainer!=null) {
+            mErrorDataContainer.setVisibility(View.GONE);
+        }
     }
 
     /**
