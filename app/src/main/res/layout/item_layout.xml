@@ -5,40 +5,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true"
+    android:clickable="false"
+    android:focusable="false"
+    android:orientation="vertical"
     android:paddingBottom="35dp"
-    android:background="?android:attr/selectableItemBackground"
-    card_view:cardCornerRadius="2dp"
+    card_view:cardCornerRadius="5dp"
     card_view:cardElevation="5dp"
-    card_view:cardUseCompatPadding="true"
-    android:orientation="vertical">
+    card_view:cardUseCompatPadding="true">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    <com.xteam.warehouse.ascii.discount.ui.views.SquareTextView
-        android:id="@+id/face_text_view"
+    <com.balysv.materialripple.MaterialRippleLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorTextGrey"
-        android:gravity="center"
-        android:textSize="25sp"
-        tools:text="aaaaaaa"/>
+        card_view:mrl_rippleHover="true"
+        card_view:mrl_rippleOverlay="true">
 
-        <TextView
-            android:id="@+id/out_of_stock_text_view"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorAccentDark"
-            android:text="@string/lbl_no_items_left"
-            android:textSize="10sp"
+        <com.xteam.warehouse.ascii.discount.ui.views.SquareTextView
+            android:id="@+id/face_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
-            android:textColor="@color/colorTextWhite"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+            android:background="@color/backgroundLightYellow"
+            android:textColor="@color/colorPrimaryBrown"
+            android:textSize="35sp"
+            card_view:mrl_rippleHover="true"
+            card_view:mrl_rippleOverlay="true"
+            tools:text="aaaaaaa"/>
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+    <ImageView
+        android:id="@+id/out_of_stock_image_view"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/sad_face"/>
 
 
 </android.support.v7.widget.CardView>

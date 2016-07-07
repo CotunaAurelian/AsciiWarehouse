@@ -2,16 +2,11 @@
 <RelativeLayout android:id="@+id/root_view"
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:background="@color/backgroundLightYellow"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:background="@color/colorPrimaryDarkGrey"
                 android:orientation="vertical">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/snackbar_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"/>
 
     <TextView
         android:id="@+id/face_text_view"
@@ -19,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/price_text_view"
         android:gravity="center"
-        android:textColor="@color/colorTextWhite"
+        android:textColor="@color/colorPrimaryBrown"
         android:textSize="40sp"
         android:textStyle="bold"
         tools:text="HAHA"/>
@@ -27,10 +22,10 @@
 
     <View
         android:layout_width="200dp"
-        android:layout_height="0.5dp"
+        android:layout_height="1dp"
         android:layout_below="@id/face_text_view"
         android:layout_centerHorizontal="true"
-        android:background="@color/colorTextGrey"/>
+        android:background="@color/delimiterColor"/>
 
     <TextView
         android:id="@+id/price_text_view"
@@ -38,9 +33,11 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/buy_button"
         android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textSize="18sp"
         android:layout_margin="10dp"
         android:text="55$"
-        android:textColor="@color/colorTextGrey"/>
+        android:textColor="@color/colorTextBrown"/>
 
     <Button
         android:id="@+id/buy_button"
@@ -49,6 +46,37 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/buy_button_drawable_selector"
         android:text="@string/lbl_buy_now"
+        android:textSize="18sp"
         android:textAllCaps="false"
-        android:textColor="@color/colorTextGrey"/>
+        android:textColor="@color/colorTextWhite"/>
+
+
+    <RelativeLayout
+        android:id="@+id/order_complete_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/completeOrderColor">
+
+        <ImageView
+            android:id="@+id/check_image_view"
+            android:src="@drawable/checked_icon"
+            android:tint="@android:color/white"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:text="@string/lbl_order_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorTextWhite"
+            android:layout_below="@id/check_image_view"/>
+    </RelativeLayout>
+
+
+
 </RelativeLayout>

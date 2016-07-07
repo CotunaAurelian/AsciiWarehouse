@@ -77,7 +77,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             itemViewHolder.mFaceTextView.setText(mDataSet.get(position).mFace);
             itemViewHolder.mFaceTextView.setTag(position);
             boolean isOutOfStock = mDataSet.get(position).mStock <= 0;
-            itemViewHolder.mOutOfStockTextView.setVisibility(isOutOfStock ? View.VISIBLE : View.GONE);
+            itemViewHolder.outOfStockImageView.setVisibility(isOutOfStock ? View.VISIBLE : View.GONE);
 
             itemViewHolder.mFaceTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -164,12 +164,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     static class ItemViewHolder extends ViewHolder {
 
         private TextView mFaceTextView;
-        private TextView mOutOfStockTextView;
+        private ImageView outOfStockImageView;
 
         ItemViewHolder(View itemView) {
             super(itemView);
             this.mFaceTextView = (TextView) itemView.findViewById(R.id.face_text_view);
-            this.mOutOfStockTextView = (TextView) itemView.findViewById(R.id.out_of_stock_text_view);
+            this.outOfStockImageView = (ImageView) itemView.findViewById(R.id.out_of_stock_image_view);
         }
     }
 

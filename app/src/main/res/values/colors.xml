@@ -3,13 +3,22 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorPrimaryDarkGrey">#1e1e1e</color>
-    <color name="colorAccent">#f63854</color>
-    <color name="colorAccentDark">#fa3350</color>
+    <color name="colorPrimaryBrown">#684B3F</color>
+    <color name="colorAccent">#FBAB3B</color>
+    <color name="colorBuyNow">#C13100</color>
+    <color name="colorBuyNowDark">#912500</color>
+    <color name="colorAccentDark">#D69347</color>
+    <color name="delimiterColor">#684B3F</color>
+    <color name="disabledColor">#ffbc58</color>
     <color name="backgroundGray">#878787</color>
     <color name="backgroundDarkGray">#292929</color>
-    <color name="backgroundLightGray">#cacaca</color>
+    <color name="backgroundLightGray">#ece8e9</color>
+    <color name="backgroundLightYellow">#EDE1D2</color>
+    <color name="backgroundLightRed">#ffd5ef</color>
     <color name="colorTextWhite">#ffffff</color>
-    <color name="colorTextGrey">#969696</color>
+    <color name="colorTextBrown">#684B3F</color>
+    <color name="colorTextDarkGrey">#101010</color>
+    <color name="completeOrderColor">#7BB31A</color>
 
 </resources>
 

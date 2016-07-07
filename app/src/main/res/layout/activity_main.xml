@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.xteam.warehouse.ascii.discount.ui.activities.MainActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/backgroundLightGray"
+                tools:context="com.xteam.warehouse.ascii.discount.ui.activities.MainActivity">
 
     <FrameLayout
         android:id="@+id/toolbar_container"
@@ -17,12 +18,12 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             android:background="@color/colorAccent"
-            app:popupTheme="@style/AppTheme.Overlay" />
+            app:popupTheme="@style/AppTheme.Overlay"/>
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -35,21 +36,21 @@
             android:id="@+id/products_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
         layout="@layout/error_or_no_data_layout"
-        android:layout_marginTop="80dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="80dp"/>
 
     <include
         layout="@layout/loading_data_layout"
-        android:layout_marginTop="80dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="80dp"/>
 
 
 </RelativeLayout>

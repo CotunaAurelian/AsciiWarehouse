@@ -26,7 +26,6 @@ import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.xteam.warehouse.ascii.discount.R;
@@ -109,11 +108,17 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
      */
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
+    /**
+     * Flag used to notify when a request has been triggered as a force request, in order for the adapter to clear it's old views
+     */
+    private boolean mIsForcedRequest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mIsForcedRequest = false;
     }
 
     @Override
@@ -135,14 +140,20 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     }
 
     /**
-     * Initialize the RecyclerView for the products and handle the scrolling events
+     * Initialize the RecyclerView for the products and handle the scrolling events  and also an empty adapter in order for the swipe to refresh layout to
+     * be drawn and enable swipe to refresh even if no items are available.
      */
-    private void initializeProductsRecyclerView(){
+    private void initializeProductsRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.products_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mGridLayoutManager = new GridLayoutManager(MainActivity.this, SPAN_COUNT);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
         mIsDataLoading = false;
+
+
+        mAdapter = new ProductsAdapter(new ArrayList<AsciiProductDTO>());
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(MainActivity.this);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -170,26 +181,24 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     /**
      * Initialize the swipe to refresh views and handle the swipe gestures
      */
-    private void initializeSwipeToRefreshViews(){
+    private void initializeSwipeToRefreshViews() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(
-                R.color.colorAccent,
-                R.color.colorAccentDark,
-                R.color.colorPrimary);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorAccentDark, R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //Show the loading animation in the middle of the screen only if no items are available
-                if (mAdapter == null || mAdapter.getItemCount() ==0){
+                if (mAdapter == null || mAdapter.getItemCount() == 0) {
                     hideErrorContainer();
                     showLoadingAnimation();
                 }
+                mIsForcedRequest = true;
                 //Force refresh items, bypassing cache and do not skip items
                 DataManager.getInstance().fetchData(mSearchQuery, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), 0);
             }
-
         });
     }
+
     /**
      * Initialize the search view and handle seach queries
      */
@@ -201,11 +210,12 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
                 if (query != null && query.trim().length() > 0) {
 
                     //Clear existing items, since the search will refresh the content of the screen
-                    if (mAdapter!= null){
+                    if (mAdapter != null) {
                         mAdapter.clear();
                     }
                     mSearchQuery = Arrays.asList(query.split("\\s\\{2,\\}"));
                     showLoadingAnimation();
+                    mIsForcedRequest = true;
                     DataManager.getInstance().fetchData(mSearchQuery, MainActivity.this, true, calculateNumberOfVerticalVisibleSquares(), 0);
                     return true;
                 } else {
@@ -277,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     }
 
 
-
     /**
      * Calculate how many items can fit the screen vertically. Items in the grid are squares and we can determine how many can fit the screen,
      * before they are layout out by the adapter.
@@ -311,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
     /**
      * Hides the error container views
      */
-    private void hideErrorContainer(){
+    private void hideErrorContainer() {
         mErrorDataContainer.setVisibility(View.GONE);
     }
 
@@ -335,6 +344,13 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
                         (asciiProductDTO.size() == 1 && asciiProductDTO.get(0) == null));
 
         mErrorDataContainer.setVisibility(errorOrNoData ? View.VISIBLE : View.GONE);
+
+        if (mIsForcedRequest) {
+            mIsForcedRequest = false;
+            if (mAdapter != null) {
+                mAdapter.clear();
+            }
+        }
 
         if (errorOrNoData) {
             mLoadingContainer.setVisibility(View.GONE);
@@ -382,8 +398,7 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
         startingIntent.putExtra(AsciiWarehouseConstants.VIEW_X_POSITION, clickedView.getX());
         startingIntent.putExtra(AsciiWarehouseConstants.VIEW_Y_POSITION, clickedView.getY());
 
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                        clickedView, "");
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, clickedView, "");
         ActivityCompat.startActivity(this, startingIntent, options.toBundle());
     }
 }

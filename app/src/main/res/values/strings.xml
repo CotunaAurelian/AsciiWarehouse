@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Discount Ascii Warehouse</string>
+    <string name="app_name">Ascii Warehouse</string>
     <string name="lbl_no_data" description="Label used when there are no data matches found">No data</string>
     <string name="lbl_only_on_stock" description="Label. Label used when the user checks if only on stock items should be displayed">Only in
         Stock</string>
