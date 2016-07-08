@@ -8,6 +8,6 @@
     <string name="lbl_only_one_in_stock" description="Label. Label used on the button the user uses to buy, when only one item is left in stock">
         BUY NOW! \n (Only 1 more in stock!)
     </string>
-    <string name="lbl_order_completed" description="Label. Label used when the user completes a buy operation">Order Successful</string>
+    <string name="lbl_order_completed" description="Label. Label used when the user completes a buy operation">Added to cart</string>
     <string name="lbl_no_items_left" description="Label. Label used when there is no item left">Out of stock</string>
 </resources>
