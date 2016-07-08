@@ -6,6 +6,7 @@
     <dimen name="normal_text_size">16sp</dimen>
     <dimen name="medium_text_size">18sp</dimen>
     <dimen name="big_text_size">25sp</dimen>
+    <dimen name="huge_text_size">35sp</dimen>
     <dimen name="buy_product_height">400dp</dimen>
     <dimen name="loading_image_dimension">35dp</dimen>
 </resources>

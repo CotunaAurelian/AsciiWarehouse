@@ -17,7 +17,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -353,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
         boolean errorOrNoData = (asciiProductDTO == null || asciiProductDTO.size() == 0 ||
                 (asciiProductDTO.size() == 1 && asciiProductDTO.get(0) == null));
 
-        Log.d("XXX", "ascii null "+(asciiProductDTO == null) );
         mErrorDataContainer.setVisibility(errorOrNoData ? View.VISIBLE : View.GONE);
 
         if (mIsForcedRequest) {
@@ -392,8 +390,9 @@ public class MainActivity extends AppCompatActivity implements ProductsSearchLis
 
     @Override
     public void onError(@Nullable Throwable exception) {
-        mErrorDataContainer.setVisibility(View.VISIBLE);
-        mAdapter.clear();
+        if (mAdapter == null || (mAdapter!=null && mAdapter.getItemCount()==0)) {
+            mErrorDataContainer.setVisibility(View.VISIBLE);
+        }
         hideAnimationContainer();
         mRecyclerView.requestFocus();
         mSwipeRefreshLayout.setRefreshing(false);
